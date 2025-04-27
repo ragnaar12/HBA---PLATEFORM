@@ -1,13 +1,22 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-@app.route('/')
+# Liste des commentaires
+comments = []
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        comment = request.form['comment']
+        comments.append({'username': username, 'comment': comment})
+        return redirect('/')
+    return render_template('index.html', comments=comments)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
