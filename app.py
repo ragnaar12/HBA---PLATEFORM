@@ -2,7 +2,6 @@ from flask import Flask, render_template_string, request, redirect
 
 app = Flask(__name__)
 
-# Exemple de projets
 projects = [
     {"title": "Plateforme IA", "description": "Projet d'intelligence artificielle avancée."},
     {"title": "Application Mobile", "description": "Développement d'une application pour étudiants."},
@@ -10,7 +9,6 @@ projects = [
 
 @app.route('/')
 def home():
-    # HTML + CSS intégrés dans la même chaîne
     html_content = '''
     <!DOCTYPE html>
     <html lang="fr">
@@ -81,17 +79,11 @@ def home():
 @app.route('/add', methods=['GET', 'POST'])
 def add_project():
     if request.method == 'POST':
-        # Récupérer les données du formulaire
         title = request.form['title']
         description = request.form['description']
-        
-        # Ajouter le projet à la liste
         projects.append({"title": title, "description": description})
-        
-        # Rediriger vers la page d'accueil après l'ajout
         return redirect('/')
     
-    # Formulaire HTML pour ajouter un projet
     html_content_add = '''
     <!DOCTYPE html>
     <html lang="fr">
@@ -157,6 +149,7 @@ def add_project():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 
 
