@@ -18,9 +18,10 @@ def index():
     # Afficher la page avec les commentaires
     return render_template("index.html", comments=comments)
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     # Lancer l'application en mode debug
     app.run(debug=True)
+
 
 
 
