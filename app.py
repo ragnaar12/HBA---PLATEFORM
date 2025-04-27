@@ -18,4 +18,8 @@ if __name__ == '__main__':
 @app.route('/', methods=['GET', 'POST'])
 def index():
     ...
+@app.route('/')
+def index():
+    return "HBA Plateforme en construction"
+
 
