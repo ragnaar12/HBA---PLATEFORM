@@ -23,7 +23,19 @@ module.exports = async (req, res) => {
         })
       });
 
-      const data = await response.json();
+      // Afficher la réponse brute pour déboguer
+      const responseText = await response.text();
+      console.log('Réponse brute:', responseText);  // Cette ligne te permettra de voir la réponse exacte
+
+      // Convertir la réponse en JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Erreur lors du parsing JSON:', e);
+        return res.status(500).json({ error: 'Réponse de l\'API non valide' });
+      }
+
       if (data?.choices?.[0]?.message?.content) {
         res.status(200).json({ reply: data.choices[0].message.content });
       } else {
@@ -36,6 +48,7 @@ module.exports = async (req, res) => {
     res.status(405).json({ error: 'Méthode non autorisée' });
   }
 };
+
 
 
 
