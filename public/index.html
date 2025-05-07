@@ -63,12 +63,18 @@
       document.getElementById("chat-box").innerHTML += `<p><strong>Toi :</strong> ${message}</p>`;
       input.value = "";
 
-      const res = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
+     const res = await fetch("/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message })
+});
 
+// ATTENTION : vérifie que la réponse est bien du JSON
+const contentType = res.headers.get("content-type") || "";
+if (!contentType.includes("application/json")) {
+  const text = await res.text(); // lis le texte brut pour afficher l’erreur
+  throw new Error("Réponse non-JSON : " + text);
+}
       const data = await res.json();
       document.getElementById("chat-box").innerHTML += `<p><strong>UniChat :</strong> ${data.reply}</p>`;
     }
