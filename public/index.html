@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant UniSign</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Assistan UniSign</h1>
+    <div id="chat-container">
+        <div id="chatbox"></div>
+        <div id="input-container">
+            <input type="text" id="userInput" placeholder="Posez votre question..." autocomplete="off">
+            <button id="sendButton">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+
+        function addMessage(sender, content, isError = false) {
+            const messageDiv = document.createElement('div');
+            
+            if (isError) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = content;
+            } else {
+                messageDiv.className = `${sender}-message message`;
+                messageDiv.innerHTML = content;
+            }
+            
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
+            userInput.value = '';
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.textContent = "Assistant rédige sa réponse...";
+            chatbox.appendChild(typingIndicator);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+                if (data?.reply) {
+                    chatbox.removeChild(typingIndicator);
+                    addMessage('bot', data.reply);
+                } else {
+                    chatbox.removeChild(typingIndicator);
+                    addMessage('bot', 'Désolé, une erreur est survenue.', true);
+                }
+            } catch (error) {
+                chatbox.removeChild(typingIndicator);
+                addMessage('bot', `Erreur: ${error.message}`, true);
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
